@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor's Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="tel"],
+        select,
+        input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        select {
+            appearance: auto;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #message {
+            margin-top: 10px;
+            text-align: center;
+            color: #007bff;
+        }
+
+        #search-section {
+            margin-top: 20px;
+        }
+
+        #search {
+            width: 70%;
+        }
+
+        #search-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        #search-button:hover {
+            background-color: #0056b3;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Doctor's Information</h1>
+    <form id="info-form">
+        <label for="doctor-name">Doctor's Name:</label>
+        <select id="doctor-name" required>
+            <option value="Dr. John Doe">Dr. John Doe</option>
+            <option value="Dr. Jane Smith">Dr. Jane Smith</option>
+            <option value="Dr. Robert Johnson">Dr. Robert Johnson</option>
+            <!-- Add more doctor names as needed -->
+        </select>
+
+        <label for="patient-name">Patient's Name:</label>
+        <input type="text" id="patient-name" required>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" required>
+
+        <label for="gender">Gender:</label>
+        <select id="gender" required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select>
+
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" required>
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" required value="">
+        
+        <button type="button" id="submit-button">Submit</button>
+    </form>
+
+    <div id="message"></div>
+
+    <div id="search-section">
+        <label for="search">Search Old Records:</label>
+        <input type="text" id="search" placeholder="Enter patient name">
+        <button type="button" id="search-button">Search</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const messageDiv = document.getElementById('message');
+            const submitButton = document.getElementById('submit-button');
+            const searchInput = document.getElementById('search');
+            const searchButton = document.getElementById('search-button');
+            const existingData = []; // You can manually add existing data here or load it from a JSON file.
+            let serialNumber = 1; // Initialize the serial number to 1.
+
+            submitButton.addEventListener('click', () => {
+                const doctorName = document.getElementById('doctor-name').value;
+                const patientName = document.getElementById('patient-name').value;
+                const age = document.getElementById('age').value;
+                const gender = document.getElementById('gender').value;
+                const phone = document.getElementById('phone').value;
+                const date = document.getElementById('date').value;
+
+                const data = {
+                    doctorName,
+                    patientName,
+                    age,
+                    gender,
+                    phone,
+                    date,
+                    fees: '20 Rs'
+                };
+
+                // Assuming you have a function to store data in 'existingData'
+                existingData.push(data);
+
+                messageDiv.textContent = 'Data submitted successfully.';
+            });
+
+            searchButton.addEventListener('click', () => {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+                const oldRecords = existingData.filter(record => record.patientName.toLowerCase().includes(searchTerm));
+
+                if (oldRecords.length > 0) {
+                    displayOldRecords(oldRecords);
+                } else {
+                    messageDiv.textContent = 'No matching records found.';
+                }
+            });
+
+            function displayOldRecords(records) {
+                let oldRecordsHTML = '<h2>Old Records:</h2><ul>';
+
+                records.forEach(record => {
+                    oldRecordsHTML += `
+                        <li>
+                            Serial No: ${serialNumber++}<br> <!-- Increment the serial number -->
+                            Doctor: ${record.doctorName}<br>
+                            Patient: ${record.patientName}<br>
+                            Age: ${record.age}<br>
+                            Gender: ${record.gender}<br>
+                            Phone: ${record.phone}<br>
+                            Date: ${record.date}<br>
+                            Fees: ${record.fees}
+                        </li>
+                    `;
+                });
+
+                oldRecordsHTML += '</ul>';
+                messageDiv.innerHTML = oldRecordsHTML;
+            }
+        });
+    </script>
+</body>
+</html>
